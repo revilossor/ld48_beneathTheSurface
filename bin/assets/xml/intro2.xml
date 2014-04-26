@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<map>
+	<name>intro2</name>
+	<icon>intro1</icon>
+	<background>
+		<sprite>assets/map/intro2/background.png</sprite>
+		<scroll>
+			<x>1</x>
+			<y>1</y>
+		</scroll>
+	</background>
+	<midground>
+		<sprite>assets/map/intro2/midground.png</sprite>
+		<size>20</size>
+		<spawnmap>assets/map/intro2/spawnmap.png</spawnmap>
+		<doormap>assets/map/intro2/doormap.png</doormap>
+	</midground>
+	<foreground>
+		<sprite>assets/map/intro2/watermap.png</sprite>
+		<scroll>
+			<x>1</x>
+			<y>1</y>
+		</scroll>
+	</foreground>
+</map>

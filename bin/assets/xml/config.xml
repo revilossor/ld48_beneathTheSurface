@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+	<version>0.0.1</version>
+	<basepath></basepath>
+	
+	<xml>
+		<player>assets/xml/jump2.xml</player>
+		<world>assets/xml/test_world.xml</world>
+	</xml>
+</config>

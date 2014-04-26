@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<map>
+	<name>test map</name>
+	<background>
+		<sprite>assets/map/test/testMap_background.png</sprite>
+		<scroll>
+			<x>1</x>
+			<y>1</y>
+		</scroll>
+	</background>
+	<midground>
+		<sprite>assets/map/test/testMap_midground.png</sprite>
+		<size>20</size>
+		<spawnmap>assets/map/test/testMap_spawnmap.png</spawnmap>
+		<doormap>assets/map/test/testMap_doormap.png</doormap>
+	</midground>
+	<foreground>
+		<sprite>assets/map/test/testMap_foreground.png</sprite>
+		<scroll>
+			<x>1</x>
+			<y>1</y>
+		</scroll>
+	</foreground>
+</map>

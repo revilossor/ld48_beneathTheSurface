@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<world>
+	<name>test world</name>
+	<width>720</width>
+	<height>440</height>
+	<scale>2</scale>
+	<locations>
+		<location id="test">assets/xml/test_map.xml</location>
+		<location id="intro1">assets/xml/intro1.xml</location>
+		<location id="intro2">assets/xml/intro2.xml</location>
+	</locations>
+</world>
