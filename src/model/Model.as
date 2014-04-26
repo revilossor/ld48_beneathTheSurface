@@ -1,6 +1,5 @@
 package model 
 {
-	import entity.flash.LineOverlay;
 	import entity.Player;
 	import oli.Debug;
 	import oli.Overlay;
@@ -18,7 +17,6 @@ package model
 		public static var world:WorldModel;
 		
 		public static var overlay:Overlay;
-		public static var lineOverlay:LineOverlay;
 		
 	}
 

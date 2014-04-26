@@ -21,7 +21,7 @@ package states
 		}
 		private function gotoTestState():void {
 		//	FlxG.switchState(new TestState());
-			FlxG.switchState(new WorldMapState());
+			FlxG.switchState(new MenuState());
 		}
 	}
 

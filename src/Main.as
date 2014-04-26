@@ -1,6 +1,5 @@
 package 
 {
-	import entity.flash.LineOverlay;
 	import flash.events.Event;
 	import model.ConfigModel;
 	import model.Model;
@@ -31,7 +30,6 @@ package
  			Debug.log(this, "init model");
 			Model.config = new ConfigModel();
 			Model.overlay = new Overlay();				stage.addChild(Model.overlay);
-			Model.lineOverlay = new LineOverlay();		stage.addChild(Model.lineOverlay);
 		}
 		
 	}

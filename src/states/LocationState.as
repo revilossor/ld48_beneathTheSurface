@@ -61,9 +61,6 @@ package states
 				var value:uint = Model.world.locations[_index].doormap.bitmapData.getPixel(p.x, p.y);
 				Debug.log(this, "value : " + value);
 			}
-			if (FlxG.keys.justPressed("ENTER")) {
-				FlxG.switchState(new WorldMapState());
-			}
 		}		
 		private function getBitmapPoint(x:Number, y:Number):FlxPoint {
 			var mid:FlxPoint = _player.getMidpoint();

@@ -21,7 +21,6 @@ package states
 		override public function destroy():void {
 			super.destroy();
 			Model.overlay.cls();
-			Model.lineOverlay.cls();
 			Debug.log(this, "destroy");
 		}
 	}

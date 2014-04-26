@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <map>
-	<name>intro1</name>
-	<icon>intro1</icon>
+	<name>intro</name>
 	<background>
 		<sprite>assets/map/intro1/background.png</sprite>
 		<scroll>
