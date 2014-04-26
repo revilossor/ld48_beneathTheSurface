@@ -1,13 +1,17 @@
 package states 
 {
+	import model.Embed;
+	import model.Model;
 	import oli.Colours;
 	import org.flixel.FlxG;
+	import org.flixel.FlxSprite;
 	/**
 	 * ...
 	 * @author Oliver Ross
 	 */
 	public class MenuState extends AbstractState
 	{
+		private var _title:FlxSprite;
 		
 		public function MenuState() 
 		{
@@ -15,6 +19,8 @@ package states
 		}
 		override public function create():void {
 			super.create();
+			add(new FlxSprite(0, 0, Embed.MENU_BG));
+			add(_title = new FlxSprite(0, 0, Embed.MENU_TITLE));
 		}
 		override public function update():void {
 			keyHandling();
@@ -26,7 +32,7 @@ package states
 		}
 		
 		private function gotoPlayState():void {
-			FlxG.switchState(new LocationState(0));
+			FlxG.switchState(new LocationState(Model.currentLocation));
 		}
 	}
 

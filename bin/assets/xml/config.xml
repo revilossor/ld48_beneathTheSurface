@@ -4,7 +4,7 @@
 	<basepath></basepath>
 	
 	<xml>
-		<player>assets/xml/jump2.xml</player>
-		<world>assets/xml/test_world.xml</world>
+		<player>assets/xml/player.xml</player>
+		<world>assets/xml/world.xml</world>
 	</xml>
 </config>

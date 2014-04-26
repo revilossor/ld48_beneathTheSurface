@@ -22,6 +22,30 @@
 		<acceleration>1.09</acceleration>
 		<duration>17</duration>
 	</jump>
+	
+	<underwater>
+		<velocity>
+			<x>3</x>
+			<y>100</y>
+			<max>
+				<x>75</x>
+				<y>200</y>
+			</max>
+		</velocity>
+		<run>
+			<decelleration>0.9</decelleration>
+			<skid>
+				<decelleration>0.5</decelleration>
+				<duration>1.0</duration>
+			</skid>
+		</run>
+		<jump>
+			<decelleration>0.7</decelleration>
+			<impulse>100</impulse>
+			<acceleration>1.07</acceleration>
+			<duration>10</duration>
+		</jump>		
+	</underwater>
 	<idle>
 		<threshold>10</threshold>
 	</idle>

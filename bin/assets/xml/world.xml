@@ -5,6 +5,8 @@
 	<height>440</height>
 	<scale>2</scale>
 	<locations>
-		<location id="intro">assets/xml/intro.xml</location>
+		<location id="1">assets/xml/1.xml</location>
+		<location id="2">assets/xml/2.xml</location>
+		
 	</locations>
 </world>

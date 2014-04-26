@@ -92,13 +92,17 @@ package model
 				for (var y:uint = 0; y < src.bitmapData.height; y++) {
 					if (src.bitmapData.getPixel(x, y) > 0) {
 						switch(src.bitmapData.getPixel(x, y)) {
-							case Colours.GREEN_1_INT:
-								spawnPoints.push( { "player": { "x":n * x, "y":n * y }} );
-								break;
 						//	case Colours.GREEN_1_INT:
 						//		spawnPoints.push( { "player": { "x":n * x, "y":n * y }} );
 						//		break;
+							case 0xff0000:
+								spawnPoints.push( { "player": { "x":n * x, "y":n * y }} );
+								spawnPoints.push( { "in": { "x":n * x, "y":n * y }} );
+								break;
 							case 0 :
+							case 0x267f00:
+								spawnPoints.push( { "out": { "x":n * x, "y":n * y }} );
+								break;
 							default:
 								Debug.error(this, data.name + " not recognised colour : " + src.bitmapData.getPixel(x,y));
 								break;

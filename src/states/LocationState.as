@@ -1,7 +1,10 @@
 package states 
 {
 	import entity.entity.Door;
+	import entity.entity.Portal;
 	import entity.Location;
+	import entity.Particle;
+	import entity.ParticleManager;
 	import entity.Player;
 	import model.Model;
 	import oli.Colours;
@@ -20,7 +23,11 @@ package states
 		private var _map:Location;	
 		private var _player:Player;
 		private var _index:uint;
+		private var _particleManager:ParticleManager;
+	
 		private var _doorTimer:int = 0;
+		
+		private var _beneathLastFrame:Boolean = false;
 		
 		public function LocationState(index:uint) 	{	
 			super();	
@@ -37,12 +44,11 @@ package states
 			_player = new Player(playerSpawn.x, playerSpawn.y);
 			add(_player);
 			add(_map.foreground);
-		//	_map.foreground.alpha = 0.6;
-			
+			add(_particleManager = new ParticleManager());
+		
 			FlxG.camera.focusOn(_player.getMidpoint());
 			FlxG.camera.zoom = 8;
 			FlxG.camera.follow(_player, FlxCamera.STYLE_TOPDOWN_TIGHT);
-			//FlxG.camera.bounds = 
 			FlxG.worldBounds = new FlxRect( 0, 0, _map.background.width, _map.background.height);
 		}
 		private var t:uint = 0;
@@ -52,8 +58,13 @@ package states
 			keyHandling();
 			zoom();
 			var sin:Number = 1 * Math.sin(0.03 + (t++*0.03));
-		//	trace("" + sin);
 			_map.foreground.alpha = 0.25 + (sin * 0.2);
+			
+			if (!_beneathLastFrame && _player.beneathSurface) {
+				Debug.log(this, "do splash particles");
+				_particleManager.doSplash(_player);
+			}
+			_beneathLastFrame = _player.beneathSurface;
 		}
 		private function keyHandling():void {
 			if (FlxG.keys.justPressed("Q")) {
@@ -72,6 +83,7 @@ package states
 		private function collision():void {
 			FlxG.collide(_player, _map.midground, _player.hit);
 			FlxG.overlap(_player, _map.entities, playerOverEntity);
+			FlxG.collide(_particleManager, _map.midground);
 		}
 		private function playerOverEntity(pl:Player, en:FlxSprite):void {
 			if (en is Door) {
@@ -86,6 +98,19 @@ package states
 					gotoOtherDoor();
 				}
 			}
+			else if (en is Portal) {
+				var portal:Portal = en as Portal;
+				if (FlxG.keys.pressed(_player.DOWN_KEY) && portal.direction == Portal.NEXT) {
+					portal.play("opening");
+					_player.active = false;
+					FlxG.fade(Colours.GREY_3, 1, gotoNextLocation);
+				}
+			}
+		}
+		
+		private function gotoNextLocation():void {
+			Debug.log(this, "goto next room");
+			FlxG.switchState(new LocationState(++Model.currentLocation));
 		}
 		private function gotoOtherDoor():void {
 			FlxG.flash(0xff000000, 2.5); 

@@ -18,6 +18,8 @@ package model
 		
 		public static var overlay:Overlay;
 		
+		public static var currentLocation:uint = 1;
+		
 	}
 
 }

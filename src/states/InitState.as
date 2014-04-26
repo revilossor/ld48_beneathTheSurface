@@ -17,9 +17,9 @@ package states
 			keyHandling();
 		}
 		private function keyHandling():void {
-			if (FlxG.keys.justPressed("SPACE")) {	FlxG.fade(0xffa0a0a0, 0.5, gotoTestState); 	}
+			if (FlxG.keys.justPressed("SPACE")) {	FlxG.fade(0xffa0a0a0, 0.5, gotoMenuState); 	}
 		}
-		private function gotoTestState():void {
+		private function gotoMenuState():void {
 		//	FlxG.switchState(new TestState());
 			FlxG.switchState(new MenuState());
 		}

@@ -1,5 +1,6 @@
 package entity 
 {
+	import flash.geom.Point;
 	import model.Embed;
 	import model.Model;
 	import oli.Debug;
@@ -29,6 +30,16 @@ package entity
 		private var BASE_JUMP_ACCELERATION:Number;
 		private var BASE_JUMP_DURATION:Number;
 		private var IDLE_VELOVITY_THRESHOLD:Number;
+		
+		private var UNDERWATER_VEOCITY:FlxPoint;
+		private var UNDERWATER_TERMINAL_VELOCITY:FlxPoint;
+		private var UNDERWATER_HORIZONTAL_DECELLERATION:Number;
+		private var UNDERWATER_HORIZONTAL_SKID_DECELLERATION:Number;
+		private var UNDERWATER_HORIZONTAL_SKID_TIME:Number;
+		private var UNDERWATER_JUMP_DECELLERATION:Number;
+		private var UNDERWATER_JUMP_IMPULSE:Number;
+		private var UNDERWATER_JUMP_ACCELERATION:Number;
+		private var UNDERWATER_JUMP_DURATION:Number;
 		
 		public static const STATE_RUNNING:String = "running";
 		public static const STATE_IDLE:String = "idle";
@@ -75,12 +86,31 @@ package entity
 			BASE_JUMP_ACCELERATION = parseFloat(Model.player.data.jump.acceleration);
 			BASE_JUMP_DURATION = parseFloat(Model.player.data.jump.duration);
 			IDLE_VELOVITY_THRESHOLD = parseFloat(Model.player.data.idle.threshold);
+			
+			UNDERWATER_VEOCITY = new FlxPoint(parseFloat(Model.player.data.underwater.velocity.x), parseFloat(Model.player.data.underwater.velocity.y));
+			UNDERWATER_TERMINAL_VELOCITY = new FlxPoint(parseFloat(Model.player.data.underwater.velocity.max.x), parseFloat(Model.player.data.underwater.velocity.max.y));
+			UNDERWATER_HORIZONTAL_DECELLERATION = parseFloat(Model.player.data.underwater.run.decelleration);
+			UNDERWATER_HORIZONTAL_SKID_DECELLERATION = parseFloat(Model.player.data.underwater.run.skid.decelleration);
+			UNDERWATER_HORIZONTAL_SKID_TIME = parseFloat(Model.player.data.underwater.run.skid.duration);
+			UNDERWATER_JUMP_DECELLERATION = parseFloat(Model.player.data.underwater.jump.decelleration);
+			UNDERWATER_JUMP_IMPULSE = parseFloat(Model.player.data.underwater.jump.impulse);
+			UNDERWATER_JUMP_ACCELERATION = parseFloat(Model.player.data.underwater.jump.acceleration);
+			UNDERWATER_JUMP_DURATION = parseFloat(Model.player.data.underwater.jump.duration);
+
 		}
 		override public function update():void {
 			super.update();
+			if (beneathSurface) {
+				acceleration = new FlxPoint(0, 500);
+				maxVelocity = UNDERWATER_TERMINAL_VELOCITY;
+			}else {
+				acceleration = new FlxPoint(0, 1000);
+				maxVelocity = BASE_TERMINAL_VELOCITY;
+			}
 			keyHandling();
 			animationHandling();
 		}
+
 		
 		private function animationHandling():void {
 			if (Math.abs(velocity.x) < Model.player.data.idle.threshold) {
@@ -91,20 +121,20 @@ package entity
 					Debug.state(this, "jump state " + (_jumpState = STATE_FALLING));
 				}else if (isTouching(FlxObject.FLOOR)) {
 					Debug.state(this, "jump state " + (_jumpState = STATE_TOUCHING));
-					_jumpTimer = BASE_JUMP_DURATION;
+					_jumpTimer = beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION;
 				}else if (velocity.x > -IDLE_VELOVITY_THRESHOLD && velocity.x < IDLE_VELOVITY_THRESHOLD) { 
 					Debug.state(this, "move state " + (_moveState = STATE_IDLE));
 				} 
 			}else {
 				if (_jumpTimer < 0) {
-					_jumpTimer = BASE_JUMP_DURATION;
+					_jumpTimer = beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION;
 					_jumpState = STATE_FALLING;
 				}else {
 					_jumpState = STATE_JUMPING;
 				}
 				if (isTouching(FlxObject.FLOOR)) {
 					Debug.state(this, "jump state " + (_jumpState = STATE_TOUCHING));
-					_jumpTimer = BASE_JUMP_DURATION;
+					_jumpTimer =beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION;
 				}
 			}
 	//		Debug.log(this, "jump state : " + _jumpState + ", move state : " + _moveState);
@@ -140,6 +170,15 @@ package entity
 				FlxG.shake(0.0015, 1 / 30);
 			}
 		}
+		public function get beneathSurface():Boolean {
+			return isPixelBeneath(getMidpoint());
+		}
+		public function get playerPixel():Point {
+			return new Point(Math.floor(getMidpoint().x / 20), Math.floor(getMidpoint().y / 20));
+		}
+		public function isPixelBeneath(p:FlxPoint):Boolean {
+			return Model.world.locations[Model.currentLocation].foreground.bitmapData.getPixel(p.x, p.y) != 0;
+		}
 		
 		private function keyHandling():void {
 			
@@ -159,13 +198,16 @@ package entity
 			if (!FlxG.keys.pressed(RIGHT_KEY) && !FlxG.keys.pressed(LEFT_KEY)) 	{ horizotal_clamp(); }
 			if (!FlxG.keys.pressed(UP_KEY)) 									{ vertical_clamp(); }
 			
+			if(FlxG.keys.justReleased("Q")){
+				Debug.log(this, "is player beneath : " + beneathSurface);
+			}
 		}
 		
 		private function vertical_clamp():void {
-			if (velocity.y < 0) { velocity.y *= BASE_JUMP_DECELLERATION; }
+			if (velocity.y < 0) { velocity.y *= beneathSurface?UNDERWATER_JUMP_DECELLERATION:BASE_JUMP_DECELLERATION; }
 		}
 		private function horizotal_clamp():void {
-			velocity.x *= BASE_HORIZONTAL_DECELLERATION;
+			velocity.x *= beneathSurface?UNDERWATER_HORIZONTAL_DECELLERATION:BASE_HORIZONTAL_DECELLERATION;
 		}
 		
 		public function get pressingNone():Boolean {
@@ -178,7 +220,7 @@ package entity
 		private function right_held():void { 
 			Debug.input(this, "right held");
 			Debug.state(this, "move state " + (_moveState = STATE_RUNNING));
-			velocity.x += BASE_VEOCITY.x;
+			velocity.x += beneathSurface?UNDERWATER_VEOCITY.x:BASE_VEOCITY.x;
 			facing = FlxObject.RIGHT;
 	//		play("run");
 		}
@@ -193,7 +235,7 @@ package entity
 		private function left_held():void {
 			Debug.input(this, "left held");
 			Debug.state(this, "move state " + (_moveState= STATE_RUNNING));
-			velocity.x -= BASE_VEOCITY.x;
+			velocity.x -= beneathSurface?UNDERWATER_VEOCITY.x:BASE_VEOCITY.x;
 			facing = FlxObject.LEFT;
 		//	play("run");
 		}
@@ -204,17 +246,22 @@ package entity
 		}
 		private function up_pressed():void { 
 			Debug.input(this, "up pressed");
-	//		Debug.log(this, "curret jump state " + _jumpState + " move state " + _moveState);
-			if (_jumpState == STATE_TOUCHING && _jumpTimer == BASE_JUMP_DURATION) {
-				Debug.state(this, "jump state " + (_jumpState = STATE_JUMPING));
-				velocity.y -= BASE_JUMP_IMPULSE;
-	//			play("jump");
+			if (beneathSurface) {
+			//	if (_jumpTimer == (beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION)) {
+					Debug.state(this, "jump state " + (_jumpState = STATE_JUMPING));
+					velocity.y = -UNDERWATER_JUMP_IMPULSE;
+			//	}
+			}else{
+				if (_jumpState == STATE_TOUCHING && _jumpTimer == (beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION)) {
+					Debug.state(this, "jump state " + (_jumpState = STATE_JUMPING));
+					velocity.y -= beneathSurface?UNDERWATER_JUMP_IMPULSE:BASE_JUMP_IMPULSE;
+				}
 			}
 		}
 		private function up_held():void { 
 			Debug.input(this, "up held"); 
 			if (_jumpTimer-- > 0) {
-				velocity.y *= BASE_JUMP_ACCELERATION;
+				velocity.y *= beneathSurface?UNDERWATER_JUMP_ACCELERATION:BASE_JUMP_ACCELERATION;
 			}
 	//		play("jump");
 		}

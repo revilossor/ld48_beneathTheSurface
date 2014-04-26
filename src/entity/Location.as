@@ -1,10 +1,12 @@
 package entity 
 {
 	import entity.entity.Door;
+	import entity.entity.Portal;
 	import model.Model;
 	import oli.Debug;
 	import oli.flx.FlxBitmapSprite;
 	import org.flixel.FlxGroup;
+	import org.flixel.FlxPoint;
 	/**
 	 * ...
 	 * @author Oliver Ross
@@ -18,6 +20,9 @@ package entity
 		public var entities:FlxGroup;
 		private var _index:uint = 0;
 		
+		public var portalIn:Portal;
+		public var portalOut:Portal;
+		
 		public function Location(index:uint) 
 		{
 			super();
@@ -26,9 +31,18 @@ package entity
 			initMidground();
 			initForeground();		
 			initEntities();
+			initPortals();
 		}
 		override public function update():void {
 			super.update();
+		}
+		
+		private function initPortals():void {
+			var location:FlxPoint = Model.world.locations[_index].getSpawnPoint("in");
+			portalIn = new Portal(location.x+5, location.y+7, Portal.LAST);
+			location = Model.world.locations[_index].getSpawnPoint("out");
+			portalOut = new Portal(location.x+5, location.y+7, Portal.NEXT);
+			entities.add(portalIn);	entities.add(portalOut);
 		}
 		
 		private function initForeground():void {
@@ -58,7 +72,7 @@ package entity
 				object = modelData[o];
 				switch(object.entity) {
 					case "door":
-						Debug.log(this, "add door at " + object.x + ", " + object.y);
+					//	Debug.log(this, "add door at " + object.x + ", " + object.y);
 						var door:Door = new Door(object.x+5, object.y+7);
 						entities.add(door);
 						break;
