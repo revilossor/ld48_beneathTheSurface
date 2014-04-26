@@ -47,7 +47,7 @@ package entity
 		public static const STATE_JUMPING:String = "jumping";
 		public static const STATE_TOUCHING:String = "touching";
 		
-		private var _jumpState:String;
+		private var _jumpState:String; public function get jumpState():String { return _jumpState; }
 		private var _moveState:String;
 		private var _jumpTimer:int;
 		

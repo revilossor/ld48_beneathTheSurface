@@ -19,6 +19,7 @@ package model
 		public var foreground:Bitmap;
 		public var entitySprites:Array = [];
 		public var spawnPoints:Array = [];
+		
 		public var doormap:Bitmap;
 		
 		public var worldLocation:FlxPoint;
@@ -92,9 +93,15 @@ package model
 				for (var y:uint = 0; y < src.bitmapData.height; y++) {
 					if (src.bitmapData.getPixel(x, y) > 0) {
 						switch(src.bitmapData.getPixel(x, y)) {
-						//	case Colours.GREEN_1_INT:
-						//		spawnPoints.push( { "player": { "x":n * x, "y":n * y }} );
-						//		break;
+							case 0x7F6A00:
+								spawnPoints.push( { "x":(n * x), "y":(n * y), "entity":"upspike" } );
+								break;
+							case 0x7F3300:
+								spawnPoints.push( { "x":(n * x), "y":(n * y), "entity":"spike" } );
+								break;
+							case 0x7F0000:
+								spawnPoints.push( { "x":(n * x) + 2, "y":(n * y) + 4, "entity":"horizontal-mover" } );
+								break;
 							case 0xff0000:
 								spawnPoints.push( { "player": { "x":n * x, "y":n * y }} );
 								spawnPoints.push( { "in": { "x":n * x, "y":n * y }} );

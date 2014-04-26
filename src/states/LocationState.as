@@ -1,11 +1,13 @@
 package states 
 {
+	import entity.baddie.Baddie;
 	import entity.entity.Door;
 	import entity.entity.Portal;
 	import entity.Location;
-	import entity.Particle;
 	import entity.ParticleManager;
 	import entity.Player;
+	import entity.Spike;
+	import entity.TopSpike;
 	import model.Model;
 	import oli.Colours;
 	import oli.Debug;
@@ -28,10 +30,12 @@ package states
 		private var _doorTimer:int = 0;
 		
 		private var _beneathLastFrame:Boolean = false;
+		private var _fromNext:Boolean;
 		
-		public function LocationState(index:uint) 	{	
+		public function LocationState(index:uint, fromNext:Boolean = false) 	{	
 			super();	
 			_index = index;
+			_fromNext = fromNext;
 		}
 		override public function create():void {
 			super.create();
@@ -41,7 +45,9 @@ package states
 			add(_map.midground);
 			add(_map.entities);
 			var playerSpawn:FlxPoint = Model.world.locations[_index].getSpawnPoint("player");
-			_player = new Player(playerSpawn.x, playerSpawn.y);
+			_fromNext?
+				Model.playerChar = _player = new Player(_map.portalOut.x, _map.portalOut.y):
+				Model.playerChar = _player = new Player(playerSpawn.x, playerSpawn.y);
 			add(_player);
 			add(_map.foreground);
 			add(_particleManager = new ParticleManager());
@@ -84,7 +90,9 @@ package states
 			FlxG.collide(_player, _map.midground, _player.hit);
 			FlxG.overlap(_player, _map.entities, playerOverEntity);
 			FlxG.collide(_particleManager, _map.midground);
+			FlxG.collide(_map.entities, _map.midground);
 		}
+		
 		private function playerOverEntity(pl:Player, en:FlxSprite):void {
 			if (en is Door) {
 				var door:Door = en as Door;
@@ -100,17 +108,46 @@ package states
 			}
 			else if (en is Portal) {
 				var portal:Portal = en as Portal;
-				if (FlxG.keys.pressed(_player.DOWN_KEY) && portal.direction == Portal.NEXT) {
-					portal.play("opening");
-					_player.active = false;
-					FlxG.fade(Colours.GREY_3, 1, gotoNextLocation);
+					if (FlxG.keys.pressed(_player.DOWN_KEY)) {
+						portal.play("opening");
+						_player.active = false;
+						if(portal.direction == Portal.NEXT){
+							FlxG.fade(Colours.GREY_3, 1, gotoNextLocation)
+						}else{
+							FlxG.fade(Colours.GREY_3, 1, gotoPreLocation);
+						}
+					}
+			}
+			else if (en is TopSpike) {
+				_particleManager.doDeath(_player);
+				playerDie();
+			}
+			else if (en is Spike) {
+				if (_player.velocity.y > 0) {
+					_particleManager.doDeath(_player);
+					playerDie();
 				}
 			}
+			else if (en is Baddie) {
+				_particleManager.doDeath(_player);
+				playerDie();
+			}
 		}
-		
+		private function playerDie(): void {
+			_player.exists = false;
+			FlxG.flash(0xffff0000, 0.5);
+			FlxG.fade(Colours.GREY_3, 1, gotoDeathState);
+		}	
+		private function gotoDeathState():void {
+			FlxG.switchState(new DeathState());
+		}
 		private function gotoNextLocation():void {
 			Debug.log(this, "goto next room");
 			FlxG.switchState(new LocationState(++Model.currentLocation));
+		}
+		private function gotoPreLocation():void {
+			Debug.log(this, "goto pre room");
+			FlxG.switchState(new LocationState(--Model.currentLocation, true));
 		}
 		private function gotoOtherDoor():void {
 			FlxG.flash(0xff000000, 2.5); 

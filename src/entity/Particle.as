@@ -8,7 +8,7 @@ package entity
 	 */
 	public class Particle extends FlxSprite
 	{
-		private var _t:int = 30;
+		private var _t:int = 25 + Math.round(Math.random()*10);
 		
 		public function Particle(xp:Number, yp:Number, vel:FlxPoint, col:uint) 
 		{

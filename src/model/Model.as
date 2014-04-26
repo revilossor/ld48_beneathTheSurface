@@ -14,11 +14,13 @@ package model
 		
 		public static var config:ConfigModel;
 		public static var player:PlayerModel;
+		public static var playerChar:Player;
+		
 		public static var world:WorldModel;
 		
 		public static var overlay:Overlay;
 		
-		public static var currentLocation:uint = 1;
+		public static var currentLocation:uint = 3;
 		
 	}
 

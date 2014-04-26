@@ -1,12 +1,15 @@
 package entity 
 {
+	import entity.baddie.HorizontalRobot;
 	import entity.entity.Door;
 	import entity.entity.Portal;
 	import model.Model;
 	import oli.Debug;
 	import oli.flx.FlxBitmapSprite;
+	import org.flixel.FlxG;
 	import org.flixel.FlxGroup;
 	import org.flixel.FlxPoint;
+	import org.flixel.FlxSprite;
 	/**
 	 * ...
 	 * @author Oliver Ross
@@ -72,9 +75,25 @@ package entity
 				object = modelData[o];
 				switch(object.entity) {
 					case "door":
-					//	Debug.log(this, "add door at " + object.x + ", " + object.y);
 						var door:Door = new Door(object.x+5, object.y+7);
 						entities.add(door);
+						break;
+				}
+			}
+			modelData = Model.world.locations[_index].spawnPoints
+			for (var p:uint = 0; p < modelData.length; p++ ) {
+				object = modelData[p];
+				switch(object.entity) {
+					case "horizontal-mover":
+						entities.add(new HorizontalRobot(object.x, object.y));
+						break;
+					case "spike":
+						entities.add(new Spike(object.x+2, object.y + 12));
+						entities.add(new Spike(object.x + 12, object.y + 12));
+						break;
+					case "upspike":
+						entities.add(new TopSpike(object.x + 2, object.y));
+						entities.add(new TopSpike(object.x + 12, object.y));
 						break;
 				}
 			}
