@@ -12,6 +12,7 @@ package states
 	public class MenuState extends AbstractState
 	{
 		private var _title:FlxSprite;
+		private var _space:FlxSprite;
 		
 		public function MenuState() 
 		{
@@ -21,6 +22,7 @@ package states
 			super.create();
 			add(new FlxSprite(0, 0, Embed.MENU_BG));
 			add(_title = new FlxSprite(0, 0, Embed.MENU_TITLE));
+			add(_space = new FlxSprite(565, 387, Embed.SPACE_WORD));
 		}
 		override public function update():void {
 			keyHandling();

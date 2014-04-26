@@ -14,6 +14,7 @@ package model
 		[Embed(source = "../../embed/gfx/entities/horizontal-robot.png")] public static const HORIZONTAL_ROBOT:Class;
 		[Embed(source = "../../embed/gfx/entities/spike.png")] public static const SPIKE_SPRITE:Class;
 		[Embed(source = "../../embed/gfx/entities/upspike.png")] public static const UPSPIKE_SPRITE:Class;
+		[Embed(source = "../../embed/gfx/words/space.png")] public static const SPACE_WORD:Class;
 	}
 
 }

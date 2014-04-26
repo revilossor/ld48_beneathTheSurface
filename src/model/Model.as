@@ -20,7 +20,7 @@ package model
 		
 		public static var overlay:Overlay;
 		
-		public static var currentLocation:uint = 3;
+		public static var currentLocation:uint = 0;
 		
 	}
 
