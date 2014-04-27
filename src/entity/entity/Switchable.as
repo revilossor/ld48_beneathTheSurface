@@ -1,6 +1,7 @@
 package entity.entity 
 {
 	import model.Embed;
+	import org.flixel.FlxG;
 	import org.flixel.FlxSprite;
 	/**
 	 * ...
@@ -11,7 +12,7 @@ package entity.entity
 		public var value:uint;
 		private var _initY:Number;
 		private var _opening:Boolean;
-		
+		private var t:uint = 0;
 		public function Switchable(xp:Number, yp:Number, val:uint) 
 		{
 			super(xp, yp, Embed.SWITCHABLE);
@@ -22,7 +23,7 @@ package entity.entity
 		public function doOpen():void {
 			_opening = true;
 			if (y > _initY - height) {
-				y-=0.1;
+				y -= 0.1;
 			}
 		}
 		override public function update():void {
@@ -31,6 +32,9 @@ package entity.entity
 				if (y < _initY) {
 					y += 0.02;
 				}
+			}
+			if (_opening && t++ % 13 == 0 && y > _initY - height) {
+				FlxG.play(Embed.SOUND_SWITCHABLE, 0.3);
 			}
 			_opening = false;
 		}

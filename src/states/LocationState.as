@@ -12,6 +12,7 @@ package states
 	import entity.Player;
 	import entity.Spike;
 	import entity.TopSpike;
+	import model.Embed;
 	import model.Model;
 	import model.PlayerModel;
 	import oli.Colours;
@@ -32,7 +33,6 @@ package states
 		private var _index:uint;
 		private var _particleManager:ParticleManager;
 		private var _doorTimer:int = 0;
-		
 		private var _beneathLastFrame:Boolean = false;
 		private var _fromNext:Boolean;
 		
@@ -75,6 +75,7 @@ package states
 			if(_player.beneathSurface){
 				if (!_beneathLastFrame) {
 					Debug.log(this, "do splash particles");
+					FlxG.play(Embed.SOUND_SPLASH, 0.8);
 					_particleManager.doSplash(_player);
 				}
 				if (Model.player.currentAir > 0) { Model.player.currentAir--; } 
@@ -83,7 +84,7 @@ package states
 			}
 			_beneathLastFrame = _player.beneathSurface;
 			Model.overlay.drawAirBar(Model.player.currentAir / Model.player.maxAir);
-			if (Model.player.currentAir == 0) { playerDie(); }
+			if (Model.player.currentAir == 0 && _player.alive) { playerDie(); }
 		}
 		private function keyHandling():void {
 			if (FlxG.keys.justPressed("Q")) {
@@ -105,9 +106,15 @@ package states
 			FlxG.overlap(_map.entities, _map.entities, entityOverEntity);
 			FlxG.collide(_particleManager, _map.midground);
 			FlxG.collide(_map.entities, _map.midground);
-			FlxG.collide(_player, _map.switchables);
+			FlxG.collide(_player, _map.switchables, playerHitSwitchables);
 			FlxG.collide(_map.entities, _map.switchables);
 			FlxG.collide(_map.seekers, _map.seekers);
+		}
+		
+		private function playerHitSwitchables(a:FlxSprite, b:FlxSprite):void {
+			if (_player.x > b.x && _player.y < b.x + b.width) {
+				playerDie();
+			}
 		}
 		private function entityOverEntity(pl:FlxSprite, en:FlxSprite):void {
 			if (en is PressureSwitch && pl is HorizontalSeeker) {
@@ -134,9 +141,10 @@ package states
 				var portal:Portal = en as Portal;
 					if (FlxG.keys.pressed(_player.DOWN_KEY)) {
 						portal.play("opening");
+						FlxG.play(Embed.SOUND_PORTAL, 0.3);
 						_player.active = false;
 						if(portal.direction == Portal.NEXT){
-							FlxG.fade(Colours.GREY_3, 1, gotoNextLocation)
+							FlxG.fade(Colours.GREY_3, 1, gotoNextLocation);
 						}else{
 							FlxG.fade(Colours.GREY_3, 1, gotoPreLocation);
 						}
@@ -157,6 +165,7 @@ package states
 				playerDie();
 			}
 			else if (en is PressureSwitch) {
+				_player.onSwitch = true;
 				_player.jumpState = Player.STATE_TOUCHING;
 				var sw:PressureSwitch = en as PressureSwitch;
 				Debug.log(this, "player on switch : " + sw.conecting);
@@ -186,6 +195,8 @@ package states
 		}
 		private function playerDie(): void {
 			_player.exists = false;
+			_player.kill();
+			FlxG.play(Embed.SOUND_DIE);
 			FlxG.flash(0xffff0000, 0.5);
 			FlxG.fade(Colours.GREY_3, 1, gotoDeathState);
 		}	
@@ -197,10 +208,16 @@ package states
 			FlxG.switchState(new LocationState(++Model.currentLocation));
 		}
 		private function gotoPreLocation():void {
-			Debug.log(this, "goto pre room");
-			FlxG.switchState(new LocationState(--Model.currentLocation, true));
+			trace("" + Model.currentLocation);
+			if (Model.currentLocation == 0) {
+				FlxG.switchState(new MenuState());
+			}else{
+				Debug.log(this, "goto pre room");
+				FlxG.switchState(new LocationState(--Model.currentLocation, true));
+			}
 		}
 		private function gotoOtherDoor():void {
+			FlxG.play(Embed.SOUND_DOOR);
 			FlxG.flash(0xff000000, 2.5); 
 			FlxG.camera.zoom *= 2 ;
 			if (FlxG.camera.zoom > 6) { FlxG.camera.zoom = 6; }

@@ -25,11 +25,15 @@ package states
 			_space.alpha += 0.001;
 		}
 		private function keyHandling():void {
-			if (FlxG.keys.justPressed("SPACE")) {	FlxG.fade(0xffa0a0a0, 0.5, gotoMenuState); 	}
+			if (FlxG.keys.justPressed("SPACE")) {	
+				FlxG.play(Embed.SOUND_OK);
+				FlxG.fade(0xffa0a0a0, 0.5, gotoMenuState); 	
+			}
 		}
 		private function gotoMenuState():void {
 		//	FlxG.switchState(new TestState());
 			FlxG.switchState(new MenuState());
+		//	FlxG.switchState(new WinState());
 		}
 	}
 

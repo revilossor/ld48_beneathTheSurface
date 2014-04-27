@@ -14,6 +14,7 @@ package model
 		
 		public var maxAir:int = 500;
 		public var currentAir:uint = 250;
+		public var deaths:uint = 0;
 		
 		public function PlayerModel() 
 		{

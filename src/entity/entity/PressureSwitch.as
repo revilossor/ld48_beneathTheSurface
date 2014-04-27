@@ -12,6 +12,7 @@ package entity.entity
 	public class PressureSwitch extends FlxSprite
 	{
 		public var conecting:uint;
+		public var isUp:Boolean = true;
 		
 		public function PressureSwitch(xp:Number, yp:Number, conn:uint) 
 		{

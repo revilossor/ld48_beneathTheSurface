@@ -12,7 +12,8 @@ package entity.baddie
 		{
 			super(xp, yp);
 			makeGraphic(16, 16, 0xffff00ff);
-		}	
+		}
+	
 	}
 
 }

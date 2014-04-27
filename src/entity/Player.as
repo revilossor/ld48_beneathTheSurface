@@ -54,8 +54,9 @@ package entity
 		private var _jumpTimer:int;
 		
 		public var beneath:Boolean;
+		private var _lastJumpState:String;
+		public var onSwitch:Boolean = false;	
 		
-			
 		public function Player(xp:Number, yp:Number) 
 		{
 			super(xp, yp);
@@ -113,6 +114,11 @@ package entity
 			}
 			keyHandling();
 			animationHandling();
+			if(_jumpState == STATE_TOUCHING && _lastJumpState != STATE_TOUCHING && isTouching(FlxObject.FLOOR) && onSwitch == false){
+				FlxG.play(Embed.SOUND_LAND);
+			}
+			_lastJumpState = _jumpState;
+			onSwitch = false;
 		}
 
 		
@@ -243,6 +249,11 @@ package entity
 			facing = FlxObject.LEFT;
 		//	play("run");
 		}
+	//	private function hitSwitchables(a:FlxSprite, b:FlxSprite):void {
+	//		if (isTouching(FlxObject.UP)) {
+	//			
+	//		}
+	//	}
 		private function left_released():void { 
 			Debug.input(this, "left released"); 
 	//		velocity.x *= 0.75;
@@ -254,11 +265,13 @@ package entity
 			//	if (_jumpTimer == (beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION)) {
 					Debug.state(this, "jump state " + (_jumpState = STATE_JUMPING));
 					velocity.y = -UNDERWATER_JUMP_IMPULSE;
+					FlxG.play(Embed.SOUND_SWIM, 0.5);
 			//	}
 			}else{
 				if (_jumpState == STATE_TOUCHING && _jumpTimer == (beneath?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION)) {
 					Debug.state(this, "jump state " + (_jumpState = STATE_JUMPING));
 					velocity.y -= beneath?UNDERWATER_JUMP_IMPULSE:BASE_JUMP_IMPULSE;
+					FlxG.play(Embed.SOUND_JUMP, 0.5);
 				}
 			}
 		}

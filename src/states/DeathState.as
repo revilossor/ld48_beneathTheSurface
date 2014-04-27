@@ -5,6 +5,7 @@ package states
 	import oli.Colours;
 	import org.flixel.FlxG;
 	import org.flixel.FlxSprite;
+	import org.flixel.FlxText;
 	/**
 	 * ...
 	 * @author Oliver Ross
@@ -14,6 +15,7 @@ package states
 		private var _title:FlxSprite;
 		private var _space:FlxSprite;
 		private var _died:FlxSprite;
+		private var deathText:FlxText;
 		
 		private var isReady:Boolean;
 		private var t:uint = 0;
@@ -24,11 +26,15 @@ package states
 		}
 		override public function create():void {
 			super.create();
+			Model.player.deaths++;
 			add(new FlxSprite(0, 0, Embed.MENU_BG));
 			add(_title = new FlxSprite(0, 0, Embed.MENU_TITLE));
 			add(_space = new FlxSprite(565, 387, Embed.SPACE_WORD));
 			add(_died = new FlxSprite(256, 190, Embed.YOU_DIED));
 			_died.alpha = 0.3;
+			deathText = new FlxText(10, 405, 360, "deaths : " + Model.player.deaths);
+			deathText.setFormat(null, 16, 0x7f0000, "left");
+			add(deathText);
 		}
 		override public function update():void {
 			keyHandling();
@@ -44,6 +50,7 @@ package states
 		}
 		private function keyHandling():void {
 			if (FlxG.keys.justReleased("SPACE")) {
+				FlxG.play(Embed.SOUND_OK);
 				isReady = true;
 				FlxG.fade(Colours.GREY_3, 1, gotoPlayState);
 			}
