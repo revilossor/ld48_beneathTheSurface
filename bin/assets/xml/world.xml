@@ -9,6 +9,11 @@
 		<location id="2">assets/xml/2.xml</location>
 		<location id="3">assets/xml/3.xml</location>
 		<location id="4">assets/xml/4.xml</location>
-		
+		<location id="5">assets/xml/5.xml</location>
+		<location id="6">assets/xml/6.xml</location>
+		<location id="7">assets/xml/7.xml</location>
+		<location id="8">assets/xml/8.xml</location>
+		<location id="9">assets/xml/9.xml</location>
+		<location id="10">assets/xml/10.xml</location>
 	</locations>
 </world>

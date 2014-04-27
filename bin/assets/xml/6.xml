@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<map>
+	<name>6</name>
+	<background>
+		<sprite>assets/map/6/background.png</sprite>
+		<scroll>
+			<x>1</x>
+			<y>1</y>
+		</scroll>
+	</background>
+	<midground>
+		<sprite>assets/map/6/midground.png</sprite>
+		<size>20</size>
+		<spawnmap>assets/map/6/spawnmap.png</spawnmap>
+		<doormap>assets/map/6/doormap.png</doormap>
+	</midground>
+	<foreground>
+		<sprite>assets/map/6/watermap.png</sprite>
+		<scroll>
+			<x>1</x>
+			<y>1</y>
+		</scroll>
+	</foreground>
+	<switchmap>assets/map/6/switchmap.png</switchmap>
+</map>

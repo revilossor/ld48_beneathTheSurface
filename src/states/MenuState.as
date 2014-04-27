@@ -14,6 +14,8 @@ package states
 		private var _title:FlxSprite;
 		private var _space:FlxSprite;
 		
+		private var isReady:Boolean;
+		
 		public function MenuState() 
 		{
 			super();
@@ -26,9 +28,15 @@ package states
 		}
 		override public function update():void {
 			keyHandling();
+			if (isReady) {
+				_title.y += 3;
+				_space.alpha *= 0.9;
+				_space.scale.x = _space.scale.y *= 1.1;
+			}
 		}
 		private function keyHandling():void {
 			if (FlxG.keys.justReleased("SPACE")) {
+				isReady = true;
 				FlxG.fade(Colours.GREY_3, 1, gotoPlayState);
 			}
 		}

@@ -47,9 +47,13 @@ package entity
 		public static const STATE_JUMPING:String = "jumping";
 		public static const STATE_TOUCHING:String = "touching";
 		
-		private var _jumpState:String; public function get jumpState():String { return _jumpState; }
+		private var _jumpState:String; 
+			public function get jumpState():String { return _jumpState; }
+			public function set jumpState(v:String):void { _jumpState = v; }
 		private var _moveState:String;
 		private var _jumpTimer:int;
+		
+		public var beneath:Boolean;
 		
 			
 		public function Player(xp:Number, yp:Number) 
@@ -100,7 +104,7 @@ package entity
 		}
 		override public function update():void {
 			super.update();
-			if (beneathSurface) {
+			if (beneath = beneathSurface) {
 				acceleration = new FlxPoint(0, 500);
 				maxVelocity = UNDERWATER_TERMINAL_VELOCITY;
 			}else {
@@ -204,10 +208,10 @@ package entity
 		}
 		
 		private function vertical_clamp():void {
-			if (velocity.y < 0) { velocity.y *= beneathSurface?UNDERWATER_JUMP_DECELLERATION:BASE_JUMP_DECELLERATION; }
+			if (velocity.y < 0) { velocity.y *= beneath?UNDERWATER_JUMP_DECELLERATION:BASE_JUMP_DECELLERATION; }
 		}
 		private function horizotal_clamp():void {
-			velocity.x *= beneathSurface?UNDERWATER_HORIZONTAL_DECELLERATION:BASE_HORIZONTAL_DECELLERATION;
+			velocity.x *= beneath?UNDERWATER_HORIZONTAL_DECELLERATION:BASE_HORIZONTAL_DECELLERATION;
 		}
 		
 		public function get pressingNone():Boolean {
@@ -220,7 +224,7 @@ package entity
 		private function right_held():void { 
 			Debug.input(this, "right held");
 			Debug.state(this, "move state " + (_moveState = STATE_RUNNING));
-			velocity.x += beneathSurface?UNDERWATER_VEOCITY.x:BASE_VEOCITY.x;
+			velocity.x += beneath?UNDERWATER_VEOCITY.x:BASE_VEOCITY.x;
 			facing = FlxObject.RIGHT;
 	//		play("run");
 		}
@@ -235,7 +239,7 @@ package entity
 		private function left_held():void {
 			Debug.input(this, "left held");
 			Debug.state(this, "move state " + (_moveState= STATE_RUNNING));
-			velocity.x -= beneathSurface?UNDERWATER_VEOCITY.x:BASE_VEOCITY.x;
+			velocity.x -= beneath?UNDERWATER_VEOCITY.x:BASE_VEOCITY.x;
 			facing = FlxObject.LEFT;
 		//	play("run");
 		}
@@ -246,22 +250,22 @@ package entity
 		}
 		private function up_pressed():void { 
 			Debug.input(this, "up pressed");
-			if (beneathSurface) {
+			if (beneath) {
 			//	if (_jumpTimer == (beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION)) {
 					Debug.state(this, "jump state " + (_jumpState = STATE_JUMPING));
 					velocity.y = -UNDERWATER_JUMP_IMPULSE;
 			//	}
 			}else{
-				if (_jumpState == STATE_TOUCHING && _jumpTimer == (beneathSurface?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION)) {
+				if (_jumpState == STATE_TOUCHING && _jumpTimer == (beneath?UNDERWATER_JUMP_DURATION:BASE_JUMP_DURATION)) {
 					Debug.state(this, "jump state " + (_jumpState = STATE_JUMPING));
-					velocity.y -= beneathSurface?UNDERWATER_JUMP_IMPULSE:BASE_JUMP_IMPULSE;
+					velocity.y -= beneath?UNDERWATER_JUMP_IMPULSE:BASE_JUMP_IMPULSE;
 				}
 			}
 		}
 		private function up_held():void { 
 			Debug.input(this, "up held"); 
 			if (_jumpTimer-- > 0) {
-				velocity.y *= beneathSurface?UNDERWATER_JUMP_ACCELERATION:BASE_JUMP_ACCELERATION;
+				velocity.y *= beneath?UNDERWATER_JUMP_ACCELERATION:BASE_JUMP_ACCELERATION;
 			}
 	//		play("jump");
 		}

@@ -1,8 +1,10 @@
 package entity 
 {
-	import entity.baddie.HorizontalRobot;
+	import entity.baddie.HorizontalSeeker;
 	import entity.entity.Door;
 	import entity.entity.Portal;
+	import entity.entity.PressureSwitch;
+	import entity.entity.Switchable;
 	import model.Model;
 	import oli.Debug;
 	import oli.flx.FlxBitmapSprite;
@@ -21,6 +23,9 @@ package entity
 		public var foreground:FlxBitmapSprite;
 		
 		public var entities:FlxGroup;
+		public var seekers:FlxGroup;
+		public var switchables:FlxGroup;
+		
 		private var _index:uint = 0;
 		
 		public var portalIn:Portal;
@@ -35,6 +40,7 @@ package entity
 			initForeground();		
 			initEntities();
 			initPortals();
+			initSwitches();
 		}
 		override public function update():void {
 			super.update();
@@ -69,6 +75,7 @@ package entity
 		}		
 		private function initEntities():void {
 			entities = new FlxGroup();
+			seekers = new FlxGroup();
 			var modelData:Array = Model.world.locations[_index].entitySprites;
 			var object:Object;
 			for (var o:uint = 0; o < modelData.length; o++ ) {
@@ -85,7 +92,9 @@ package entity
 				object = modelData[p];
 				switch(object.entity) {
 					case "horizontal-mover":
-						entities.add(new HorizontalRobot(object.x, object.y));
+						var n:HorizontalSeeker;
+						entities.add(n = new HorizontalSeeker(object.x, object.y));
+						seekers.add(n);
 						break;
 					case "spike":
 						entities.add(new Spike(object.x+2, object.y + 12));
@@ -94,6 +103,25 @@ package entity
 					case "upspike":
 						entities.add(new TopSpike(object.x + 2, object.y));
 						entities.add(new TopSpike(object.x + 12, object.y));
+						break;
+				}
+			}
+		}
+		private function initSwitches():void {
+			switchables = new FlxGroup();
+			var modelData:Array = Model.world.locations[_index].entitySprites;
+			var object:Object;
+			for (var o:uint = 0; o < modelData.length; o++ ) {
+				object = modelData[o];
+				switch(object.entity) {
+					case "switch":
+						var sw:PressureSwitch = new PressureSwitch(object.x, object.y, object.connecting);
+						entities.add(sw);
+						break;
+					case "switchable":
+						var swi:Switchable = new Switchable(object.x, object.y, object.value);
+						entities.add(swi);
+						switchables.add(swi);
 						break;
 				}
 			}

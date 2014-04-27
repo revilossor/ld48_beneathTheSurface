@@ -11,12 +11,12 @@ package entity.baddie
 	 * ...
 	 * @author Oliver Ross
 	 */
-	public class HorizontalRobot extends Baddie
+	public class HorizontalSeeker extends Baddie
 	{
 		private var _range:uint = 110;
 		private var _speed:uint = 80;
 		
-		public function HorizontalRobot(xp:Number, yp:Number) 
+		public function HorizontalSeeker(xp:Number, yp:Number) 
 		{
 			super(xp, yp);
 			loadGraphic(Embed.HORIZONTAL_ROBOT, true, true, 16, 16);

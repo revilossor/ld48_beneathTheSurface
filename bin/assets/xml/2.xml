@@ -21,4 +21,5 @@
 			<y>1</y>
 		</scroll>
 	</foreground>
+	<switchmap>assets/map/2/switchmap.png</switchmap>
 </map>

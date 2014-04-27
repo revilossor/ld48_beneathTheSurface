@@ -33,6 +33,21 @@ package oli
 			graphics.lineTo(x2-t, y2);
 			return this;
 		}
+		public function drawUnfilledRect(x1:Number, y1:Number, w:Number, h:Number, colour:uint, a:Number):Overlay {
+			graphics
+			graphics.lineStyle(4,0x001bfd);
+			graphics.beginFill(0x40404, a);
+			graphics.drawRect(x1, y1, w, h);
+			graphics.endFill();
+			return this;
+		}
+		public function drawAirBar(percent:Number):void {
+			graphics.clear();
+			drawUnfilledRect(10, 380, 225, 40, 0x001bfd, 0.4);
+			var maxW:Number = 225;
+			var wid:Number = maxW * percent;
+			drawRect(10, 380, wid, 40, 0x5863A1, 0.7);
+		}
 	}
 
 }

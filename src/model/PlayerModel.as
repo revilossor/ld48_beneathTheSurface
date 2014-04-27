@@ -12,6 +12,9 @@ package model
 	{
 		public var worldLocation:FlxPoint;
 		
+		public var maxAir:int = 500;
+		public var currentAir:uint = 250;
+		
 		public function PlayerModel() 
 		{
 			Debug.log(this, "construct");

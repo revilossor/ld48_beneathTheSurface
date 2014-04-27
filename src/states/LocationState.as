@@ -1,14 +1,19 @@
 package states 
 {
 	import entity.baddie.Baddie;
+	import entity.baddie.HorizontalSeeker;
 	import entity.entity.Door;
 	import entity.entity.Portal;
+	import entity.entity.PressureSwitch;
+	import entity.entity.Switchable;
+	import entity.entity.WinButton;
 	import entity.Location;
 	import entity.ParticleManager;
 	import entity.Player;
 	import entity.Spike;
 	import entity.TopSpike;
 	import model.Model;
+	import model.PlayerModel;
 	import oli.Colours;
 	import oli.Debug;
 	import org.flixel.FlxCamera;
@@ -26,7 +31,6 @@ package states
 		private var _player:Player;
 		private var _index:uint;
 		private var _particleManager:ParticleManager;
-	
 		private var _doorTimer:int = 0;
 		
 		private var _beneathLastFrame:Boolean = false;
@@ -44,6 +48,9 @@ package states
 			add(_map.background);
 			add(_map.midground);
 			add(_map.entities);
+			if (Model.currentLocation == 9) {
+				_map.entities.add(new WinButton(32 * 20, 15 * 20));
+			}
 			var playerSpawn:FlxPoint = Model.world.locations[_index].getSpawnPoint("player");
 			_fromNext?
 				Model.playerChar = _player = new Player(_map.portalOut.x, _map.portalOut.y):
@@ -65,12 +72,18 @@ package states
 			zoom();
 			var sin:Number = 1 * Math.sin(0.03 + (t++*0.03));
 			_map.foreground.alpha = 0.25 + (sin * 0.2);
-			
-			if (!_beneathLastFrame && _player.beneathSurface) {
-				Debug.log(this, "do splash particles");
-				_particleManager.doSplash(_player);
+			if(_player.beneathSurface){
+				if (!_beneathLastFrame) {
+					Debug.log(this, "do splash particles");
+					_particleManager.doSplash(_player);
+				}
+				if (Model.player.currentAir > 0) { Model.player.currentAir--; } 
+			}else {
+				if (Model.player.currentAir < Model.player.maxAir) { Model.player.currentAir += 10; }
 			}
 			_beneathLastFrame = _player.beneathSurface;
+			Model.overlay.drawAirBar(Model.player.currentAir / Model.player.maxAir);
+			if (Model.player.currentAir == 0) { playerDie(); }
 		}
 		private function keyHandling():void {
 			if (FlxG.keys.justPressed("Q")) {
@@ -89,10 +102,21 @@ package states
 		private function collision():void {
 			FlxG.collide(_player, _map.midground, _player.hit);
 			FlxG.overlap(_player, _map.entities, playerOverEntity);
+			FlxG.overlap(_map.entities, _map.entities, entityOverEntity);
 			FlxG.collide(_particleManager, _map.midground);
 			FlxG.collide(_map.entities, _map.midground);
+			FlxG.collide(_player, _map.switchables);
+			FlxG.collide(_map.entities, _map.switchables);
+			FlxG.collide(_map.seekers, _map.seekers);
 		}
-		
+		private function entityOverEntity(pl:FlxSprite, en:FlxSprite):void {
+			if (en is PressureSwitch && pl is HorizontalSeeker) {
+				var sw:PressureSwitch = en as PressureSwitch;
+				sw.play("down");
+				pl.y = sw.y + 8;
+				getSwitchable(sw.conecting).doOpen();
+			}
+		}
 		private function playerOverEntity(pl:Player, en:FlxSprite):void {
 			if (en is Door) {
 				var door:Door = en as Door;
@@ -132,6 +156,33 @@ package states
 				_particleManager.doDeath(_player);
 				playerDie();
 			}
+			else if (en is PressureSwitch) {
+				_player.jumpState = Player.STATE_TOUCHING;
+				var sw:PressureSwitch = en as PressureSwitch;
+				Debug.log(this, "player on switch : " + sw.conecting);
+				sw.play("down");
+				_player.y = sw.y + 8;
+				if (sw.conecting == 0xff00ff) {
+					playerWin();
+					return;
+				}
+				getSwitchable(sw.conecting).doOpen();
+			}
+		}
+		private function playerWin():void {
+			Debug.log(this, "WIN!");
+			FlxG.fade(Colours.GREY_3, 1, gotoWinState);
+		}
+		private function gotoWinState():void {
+			FlxG.switchState(new WinState());
+		}
+		private function getSwitchable(conecting:uint):Switchable {
+			for (var i:int = 0; i < _map.switchables.length; i++) {
+				if (_map.switchables.members[i].value == conecting) {
+					return _map.switchables.members[i];
+				}
+			}
+			return null;
 		}
 		private function playerDie(): void {
 			_player.exists = false;

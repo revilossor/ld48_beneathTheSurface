@@ -1,5 +1,6 @@
 package model 
 {
+	import entity.entity.PressureSwitch;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;
@@ -20,6 +21,7 @@ package model
 		public var entitySprites:Array = [];
 		public var spawnPoints:Array = [];
 		
+		public var switchmap:Bitmap;
 		public var doormap:Bitmap;
 		
 		public var worldLocation:FlxPoint;
@@ -38,6 +40,7 @@ package model
 			loadForeground();
 			loadSpawnPoints();
 			loadDoormap();
+			loadSwitchmap();
 		}
 		private function loadBackground():void {
 			loadSprite("" + (Model.config.data.basepath) + (data.background.sprite), function(e:Event):void {
@@ -146,6 +149,33 @@ package model
 				}
 			}
 			return new FlxPoint();
+		}
+		
+		private function loadSwitchmap():void {
+			loadSprite("" + (Model.config.data.basepath) + (data.switchmap), function(e:Event):void {
+				Debug.log(this, data.name + " switchmap loaded");
+				makeSwitchmap(switchmap = e.target.content);
+			});
+		}
+		private function makeSwitchmap(src:Bitmap):void {
+			// max 4 switches - cols are FF7FB6, A17FFF, 7FC9FF, FFE97F - connecting is col++
+			var n:Number = data.midground.size;
+			for (var x:uint = 0; x < src.bitmapData.width; x++) {
+				for (var y:uint = 0; y < src.bitmapData.height; y++) {
+				//	trace(src.bitmapData.getPixel(x, y).toString());
+					if (src.bitmapData.getPixel(x, y) == 0xff7fb6) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switch", "connecting":"0xff7fb7" } );
+					if (src.bitmapData.getPixel(x, y) == 0xff7fb7) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switchable", "value":"0xff7fb7" } );
+					
+					if (src.bitmapData.getPixel(x, y) == 0xA17FFF) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switch", "connecting":"0xA17FF1" } );
+					if (src.bitmapData.getPixel(x, y) == 0xA17FF1) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switchable", "value":"0xA17FF1" } );
+					
+					if (src.bitmapData.getPixel(x, y) == 0x7FC9FF) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switch", "connecting":"0x7FC9F1" } );
+					if (src.bitmapData.getPixel(x, y) == 0x7FC9F1) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switchable", "value":"0x7FC9F1" } );
+					
+					if (src.bitmapData.getPixel(x, y) == 0xFFE97F) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switch", "connecting":"0xFFE978" } );
+					if (src.bitmapData.getPixel(x, y) == 0xFFE978) entitySprites.push( { "x":n * x, "y":n * y, "entity":"switchable", "value":"0xFFE978" } );
+				}
+			}
 		}
 		
 	}

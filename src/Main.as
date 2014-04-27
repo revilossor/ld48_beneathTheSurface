@@ -14,6 +14,8 @@ package
 	 */
 	public class Main extends FlxGame
 	{
+		
+		[SWF(width="720", height="440", backgroundColor="#000000")]
 		public function Main():void 
 		{
 			super(720, 440, InitState, 1, 60, 30);
